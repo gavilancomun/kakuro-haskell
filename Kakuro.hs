@@ -23,10 +23,22 @@ draw (Value values) =
       else 
          " " ++ concatMap (\ x -> if any (== x) values then show x else ".") [ 1..9 ]
 
+
+drawRow row = (concatMap draw row) ++ "\n"
+
+drawGrid grid = "\n" ++ concatMap drawRow grid
+
+grid1 = [ [ e, (d 4), (d 22), e, (d 16), (d 3) ],
+          [ (a 3), v, v, (da 16 6), v, v ],
+          [ (a 18), v, v, v, v, v ],
+          [ e, (da 17 23), v, v, v, (d 14) ],
+          [ (a 9), v, v, (a 6), v, v ],
+          [ (a 15), v, v, (a 12), v, v ] ]
+
 main = do
   putStrLn (draw Empty)
   putStrLn (draw (Across 9))
   putStrLn (draw (DownAcross 9 9))
   putStrLn (draw v)
   putStrLn (draw (vv [1, 3, 5, 9]))
-
+  putStrLn (drawGrid grid1)
