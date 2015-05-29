@@ -39,7 +39,7 @@ permute vs target soFar
 permuteAll vs total = permute vs total []
 
 isPossible (Value values) n = n `elem` values
-isPossible cell _ = False
+isPossible _ _ = False
 
 solveStep cells total = 
   let final = (length cells) - 1 in
@@ -57,21 +57,21 @@ colTarget (DownAcross d _) = d
 colTarget _ = 0
 
 solvePair f (nvs : vs : _) = nvs ++ (solveStep vs (f (last nvs))) 
-solvePair f (nvs : _) = nvs
-solvePair f _ = []
+solvePair _ (nvs : _) = nvs
+solvePair _ _ = []
 
 solvePairRow = solvePair rowTarget
 
 solvePairCol = solvePair colTarget
 
-partitionBy f [] = []
-partitionBy f coll@(x : xs) = 
+partitionBy _ [] = []
+partitionBy f coll@(x : _) = 
   let fx = f x
       run = takeWhile (\ y -> fx == f y) coll
   in
   [ run ] ++ (partitionBy f (drop (length run) coll))
 
-partitionAll n step [] = []
+partitionAll _ _ [] = []
 partitionAll n step coll = [(take n coll)] ++ (partitionAll n step (drop step coll))
 
 partitionN n coll = partitionAll n n coll
