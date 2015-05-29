@@ -19,9 +19,8 @@ draw (Empty) = "   -----  "
 draw (Down n) =  printf "   %2d\\--  " n
 draw (Across n) = printf "   --\\%2d  " n
 draw (DownAcross down across) = (printf "   %2d" down) ++ printf "\\%2d  " across
-draw (Value values) 
-     | 1 == (length values) = concatMap (\ x -> "     " ++ show x ++ "    ") values
-     | otherwise = " " ++ concatMap (\ x -> if x `elem` values then show x else ".") [1..9]
+draw (Value [x]) =  "     " ++ show x ++ "    "
+draw (Value values) = " " ++ concatMap (\ x -> if x `elem` values then show x else ".") [1..9]
 
 drawRow row = (concatMap draw row) ++ "\n"
 
@@ -29,14 +28,13 @@ drawGrid grid = "\n" ++ concatMap drawRow grid
 
 allDifferent nums = (length nums) == length (nub nums)
 
+permutePart (Value values) vs target soFar = concatMap (\ v -> permute vs (target - v) (soFar ++ [ v ])) values
+permutePart _ _ _ _ = []
+
 permute vs target soFar  
-    | target >= 1 = 
-        if length soFar == (length vs) - 1 then [ soFar ++ [ target ] ]
-        else 
-            case vs !! (length soFar) of
-              Value values -> concatMap (\ v -> permute vs (target - v) (soFar ++ [ v ])) values
-              _ -> []
-    | otherwise = []
+  | (target >= 1) && (length soFar == (length vs) - 1) = [ soFar ++ [ target ] ]
+  | (target >= 1) = permutePart (vs !! (length soFar)) vs target soFar
+  | otherwise = []
 
 permuteAll vs total = permute vs total []
 
@@ -44,11 +42,11 @@ isPossible (Value values) n = n `elem` values
 isPossible cell _ = False
 
 solveStep cells total = 
-    let final = (length cells) - 1 in
-    map (\ p -> Value(nub p))
-        (transpose
-          (filter allDifferent
-            (filter (\ p -> isPossible (cells !! final) (p !! final)) (permuteAll cells total))))
+  let final = (length cells) - 1 in
+  map (\ p -> Value(nub p))
+      (transpose (filter allDifferent
+                         (filter (\ p -> isPossible (cells !! final) (p !! final))
+                                 (permuteAll cells total))))
 
 rowTarget (Across n) = n
 rowTarget (DownAcross _ a) = a
@@ -60,7 +58,7 @@ colTarget _ = 0
 
 solvePair f (nvs : vs : _) = nvs ++ (solveStep vs (f (last nvs))) 
 solvePair f (nvs : _) = nvs
-solvePair f pair = []
+solvePair f _ = []
 
 solvePairRow = solvePair rowTarget
 
@@ -68,10 +66,10 @@ solvePairCol = solvePair colTarget
 
 partitionBy f [] = []
 partitionBy f coll@(x : xs) = 
-        let fx = f x
-            run = takeWhile (\ y -> fx == f y) coll
-        in
-        [ run ] ++ (partitionBy f (drop (length run) coll))
+  let fx = f x
+      run = takeWhile (\ y -> fx == f y) coll
+  in
+  [ run ] ++ (partitionBy f (drop (length run) coll))
 
 partitionAll n step [] = []
 partitionAll n step coll = [(take n coll)] ++ (partitionAll n step (drop step coll))
@@ -106,7 +104,7 @@ grid1 = [ [ e, (d 4), (d 22), e, (d 16), (d 3) ],
           [ (a 15), v, v, (a 12), v, v ] ]
 
 main = do
-  putStrLn (show $ permuteAll [v, v] 6)
+  putStrLn $ show $ permuteAll [v, v] 6
   putStrLn (draw Empty)
   putStrLn (draw (Across 9))
   putStrLn (draw (DownAcross 9 9))
@@ -114,5 +112,5 @@ main = do
   putStrLn (draw (vv [1, 3, 5, 9]))
   putStrLn (drawGrid grid1)
   putStrLn (drawGrid (solveGrid grid1))
-  putStrLn (drawGrid (solver grid1))
+  putStrLn $ drawGrid $ solver grid1
 
