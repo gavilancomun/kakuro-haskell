@@ -6,6 +6,7 @@ data Cell = Empty
             | Down Int
             | DownAcross Int Int
             | Value [Int]
+  deriving (Show, Eq)
 
 e = Empty
 a = Across
@@ -24,13 +25,11 @@ draw (Value values) =
       else 
          " " ++ concatMap (\ x -> if x `elem` values then show x else ".") [ 1..9 ]
 
-
 drawRow row = (concatMap draw row) ++ "\n"
 
 drawGrid grid = "\n" ++ concatMap drawRow grid
 
 allDifferent nums = (length nums) == length (nub nums)
-
 
 permute vs target soFar = 
     if target >= 1 then 
@@ -50,7 +49,7 @@ isPossible cell n =
 
 solveStep cells total = 
     let final = (length cells) - 1 in
-    map (\ p -> Value(p))
+    map (\ p -> Value(nub p))
         (transpose
           (filter allDifferent
             (filter (\ p -> isPossible (cells !! final) (p !! final)) (permuteAll cells total))))
@@ -95,8 +94,7 @@ solveCol = solveLine solvePairCol
 solveGrid grid = 
   transpose (map solveCol (transpose (map solveRow grid)))
 
-solver :: [[Cell]] -> [[Cell]]
-solver grid =
+solver grid = 
   let g = solveGrid grid
   in
   if g == grid then
@@ -118,5 +116,6 @@ main = do
   putStrLn (draw v)
   putStrLn (draw (vv [1, 3, 5, 9]))
   putStrLn (drawGrid grid1)
+  putStrLn (drawGrid (solveGrid grid1))
   putStrLn (drawGrid (solver grid1))
 
