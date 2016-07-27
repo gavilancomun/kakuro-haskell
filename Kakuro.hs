@@ -1,3 +1,5 @@
+module Kakuro where
+
 import Text.Printf
 import Data.List
 
@@ -102,15 +104,4 @@ grid1 = [ [ e, (d 4), (d 22), e, (d 16), (d 3) ],
           [ e, (da 17 23), v, v, v, (d 14) ],
           [ (a 9), v, v, (a 6), v, v ],
           [ (a 15), v, v, (a 12), v, v ] ]
-
-main = do
-  putStrLn $ show $ permuteAll [v, v] 6
-  putStrLn (draw Empty)
-  putStrLn (draw (Across 9))
-  putStrLn (draw (DownAcross 9 9))
-  putStrLn (draw v)
-  putStrLn (draw (vv [1, 3, 5, 9]))
-  putStrLn (drawGrid grid1)
-  putStrLn (drawGrid (solveGrid grid1))
-  putStrLn $ drawGrid $ solver grid1
 
