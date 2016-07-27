@@ -1,9 +1,4 @@
--- Example.hs  --  Examples from HUnit user's guide
---
--- For more examples, check out the tests directory.  It contains unit tests
--- for HUnit.
-
--- This example file will be the basis for Kakuro tests.
+-- Based on Examples from HUnit user's guide
 
 module KakuroTest where
 
@@ -48,6 +43,6 @@ main = do
   putStrLn (drawGrid grid1)
   putStrLn (drawGrid (solveGrid grid1))
   putStrLn $ drawGrid $ solver grid1
-  do _ <- runTestTT tests
-     runTestTT tests'
+  runTestTT tests
+  runTestTT tests'
 
